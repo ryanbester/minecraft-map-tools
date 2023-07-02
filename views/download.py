@@ -234,10 +234,11 @@ class DownloadFrame(View):
             self.source_dropdown.destroy()
 
         sources = []
-        if len(self.controller.state.selected_server.dynmap_url) > 0:
-            sources.append('Dynmap')
-        if len(self.controller.state.selected_server.journeymap_url) > 0:
-            sources.append('JourneyMap')
+        if self.controller.state.selected_server is not None:
+            if len(self.controller.state.selected_server.dynmap_url) > 0:
+                sources.append('Dynmap')
+            if len(self.controller.state.selected_server.journeymap_url) > 0:
+                sources.append('JourneyMap')
 
         default = None
         if len(sources) > 0:

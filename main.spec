@@ -3,13 +3,12 @@
 
 block_cipher = None
 
-
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
     datas=[('icon.ico', '.')],
-    hiddenimports=[],
+    hiddenimports=['dependency_injector.errors', 'dependency_injector.wiring', 'six', 'asyncio'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
