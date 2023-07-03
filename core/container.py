@@ -107,7 +107,7 @@ class Controllers(containers.DeclarativeContainer):
         views.download_frame,
         download_mc_coords_controller,
         download_grid_ref_controller,
-        download_grid_ref_controller
+        download_dynmap_tile_controller
     )
 
     grid_ref_conv_controller = providers.Singleton(

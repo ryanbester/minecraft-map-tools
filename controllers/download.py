@@ -108,7 +108,10 @@ class DownloadController(Controller):
                 from_tile_x, from_tile_y = DynmapCoords.mc_to_tile(map_obj, input_range['zoom'], from_x, 64, from_y)
                 to_tile_x, to_tile_y = DynmapCoords.mc_to_tile(map_obj, input_range['zoom'], to_x, 64, to_y)
             elif user_input['coord_mode'] == 'dynmap':
-                pass
+                from_tile_x = input_range['from_x']
+                from_tile_y = input_range['from_y']
+                to_tile_x = input_range['to_x']
+                to_tile_y = input_range['to_y']
             else:
                 self.view.display_error('Invalid coordinate mode')
                 return
