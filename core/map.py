@@ -2,7 +2,7 @@ import os
 
 from PIL import Image
 
-from models.tilestitchargs import TileStitchArgs
+from models.tilestitchargs import TileStitchArgs, YMode
 
 
 class Map:
@@ -28,6 +28,14 @@ class Map:
 
                 tile = Image.open(os.path.join(tiles_dir, '{}_{}.jpg'.format(x, y)))
                 tile_img = tile.copy()
-                img.paste(tile_img, (int(img_x), int(height - img_y - args.tile_height)))
+
+                if args.y_mode == YMode.DYNMAP:
+                    y_location = int(height - img_y - args.tile_height)
+                elif args.y_mode == YMode.JOURNEYMAP:
+                    y_location = int(img_y)
+                else:
+                    raise ValueError("Y Mode invalid")
+
+                img.paste(tile_img, (int(img_x), y_location))
 
         img.save(os.path.join(output_dir, 'map.png'))

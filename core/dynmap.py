@@ -9,7 +9,7 @@ from urllib import request
 import validators
 
 from models.server import Server
-from models.tilestitchargs import TileStitchArgs
+from models.tilestitchargs import TileStitchArgs, YMode
 
 
 class Dynmap:
@@ -71,4 +71,4 @@ class Dynmap:
                 url = dynmap_url + Dynmap.get_tile_path(world_name, map_name, zoom, x, y)
                 urllib.request.urlretrieve(url, os.path.join(tiles_dir, '{}_{}.jpg'.format(x, y)))
 
-        return TileStitchArgs(from_x, from_y, to_x, to_y, 128, 128, diff)
+        return TileStitchArgs(from_x, from_y, to_x, to_y, 128, 128, diff, YMode.DYNMAP)

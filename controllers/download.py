@@ -6,6 +6,7 @@ from controllers.controller import Controller
 from core.dynmap import Dynmap
 from core.dynmapcoords import DynmapCoords
 from core.gridref import GridRef
+from core.journeymap import JourneyMap
 from core.map import Map
 from core.state import State
 from models.config import Config
@@ -132,14 +133,55 @@ class DownloadController(Controller):
             except Exception:
                 self.view.display_error('Failed to download tiles')
                 return
+        elif user_input['source'] == 'JourneyMap':
+            if user_input['coord_mode'] == 'mc':
+                from_region_x = int(input_range['from_x']) >> 4 >> 5
+                from_region_y = int(input_range['from_z']) >> 4 >> 5
+                to_region_x = int(input_range['to_x']) >> 4 >> 5
+                to_region_y = int(input_range['to_z']) >> 4 >> 5
+            elif user_input['coord_mode'] == 'grid':
+                try:
+                    from_region_x, from_region_y = GridRef.grid_ref_to_mc(input_range['from'])
+                except ValueError as e:
+                    self.view.display_error('From grid reference: {}'.format(str(e)))
+                    return
 
-            try:
-                Map.stitch(tiles_dir, user_input['output_dir'], stitch_args, self.update_progress)
-            except Exception:
-                self.view.display_error('Failed to stitch tiles')
+                try:
+                    to_region_x, to_region_y = GridRef.grid_ref_to_mc(input_range['to'])
+                except ValueError as e:
+                    self.view.display_error('To grid reference: {}'.format(str(e)))
+                    return
+            elif user_input['coord_mode'] == 'dynmap':
+                self.view.display_error('Dynmap tile coordinates cannot be used with JourneyMap source')
+                return
+            else:
+                self.view.display_error('Invalid coordinate mode')
                 return
 
-            self.update_progress('Idle', 0, 1)
+            low_region_x = min(from_region_x, to_region_x)
+            low_region_y = min(from_region_y, to_region_y)
+            high_region_x = max(from_region_x, to_region_x)
+            high_region_y = max(from_region_y, to_region_y)
+
+            try:
+                stitch_args = JourneyMap.download_tiles(tiles_dir, self.state.selected_server.journeymap_url,
+                                                        user_input['map_id'], input_range['zoom'], low_region_x,
+                                                        low_region_y, high_region_x, high_region_y,
+                                                        self.update_progress)
+            except Exception:
+                self.view.display_error('Failed to download tiles')
+                return
+        else:
+            self.view.display_error('Invalid source')
+            return
+
+        try:
+            Map.stitch(tiles_dir, user_input['output_dir'], stitch_args, self.update_progress)
+        except Exception:
+            self.view.display_error('Failed to stitch tiles')
+            return
+
+        self.update_progress('Idle', 0, 1)
 
     def update_progress(self, message: str, i, total):
         self.progress_msg = message
