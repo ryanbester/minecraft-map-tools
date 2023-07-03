@@ -15,6 +15,9 @@ class AboutFrame(View):
         text = ttk.Label(self.frame, text='A tool for downloading maps from Dynmap and JourneyMap')
         text.pack(padx=7, pady=7)
 
+        version = ttk.Label(self.frame, text='Version 0.2.0')
+        version.pack(padx=7, pady=7)
+
         copyright_lbl = ttk.Label(self.frame, text='Copyright (C) 2023 Ryan Bester')
         copyright_lbl.pack(padx=7, pady=7)
 
