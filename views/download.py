@@ -114,6 +114,9 @@ class DownloadMcCoordsFrame(View):
 
 class DownloadGridRefFrame(View):
     controller: DownloadGridRefController
+    grid_ref_from_txt: ttk.Entry
+    grid_ref_to_txt: ttk.Entry
+    zoom_txt: ttk.Entry
 
     def __init__(self):
         super().__init__()
@@ -122,12 +125,47 @@ class DownloadGridRefFrame(View):
     def build_view(self, parent, controller: DownloadGridRefController):
         self.controller = controller
 
+        # Create the view if it's being shown for the first time
+        if self.frame is None:
+            self.frame = ttk.Frame(parent)
+
+            self.frame.columnconfigure(index=0, weight=1)
+            self.frame.columnconfigure(index=1, weight=1)
+
+            from_lbl = ttk.Label(self.frame, text='From: ')
+            from_lbl.grid(row=0, column=0, padx=7, pady=7, columnspan=2)
+
+            self.grid_ref_from_txt = ttk.Entry(self.frame)
+            self.grid_ref_from_txt.grid(row=1, column=0, padx=7, pady=7, sticky='we', columnspan=2)
+
+            to_lbl = ttk.Label(self.frame, text='To: ')
+            to_lbl.grid(row=2, column=0, padx=7, pady=7, columnspan=2)
+
+            self.grid_ref_to_txt = ttk.Entry(self.frame)
+            self.grid_ref_to_txt.grid(row=3, column=0, padx=7, pady=7, sticky='we', columnspan=2)
+
+            zoom_lbl = ttk.Label(self.frame, text='Zoom: ')
+            zoom_lbl.grid(row=4, column=0, padx=7, pady=7)
+
+            self.zoom_txt = ttk.Entry(self.frame)
+            self.zoom_txt.grid(row=4, column=1, padx=7, pady=7, sticky='we')
+            self.zoom_txt.insert(0, '0')
+
+        self.frame.grid(row=2, column=0, columnspan=3, padx=0, pady=0, sticky='nsew')
+
     def hide_view(self):
         if self.frame is not None:
             self.frame.grid_forget()
 
     def get_input(self) -> dict:
-        return {}
+        grid_ref_input = {'from': self.grid_ref_from_txt.get(), 'to': self.grid_ref_to_txt.get()}
+
+        try:
+            grid_ref_input['zoom'] = int(self.zoom_txt.get())
+        except ValueError:
+            raise ValueError('Zoom must be an integer')
+
+        return grid_ref_input
 
 
 class DownloadDynmapTileFrame(View):
